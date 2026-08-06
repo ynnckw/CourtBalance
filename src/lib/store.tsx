@@ -100,8 +100,16 @@ function reducer(state: State, action: Action): State {
         ...state,
         plan: state.plan.map((e) => (e.id === action.id ? { ...e, ...action.wert } : e)),
       }
-    case 'plan/entfernen':
-      return { ...state, plan: state.plan.filter((e) => e.id !== action.id) }
+    case 'plan/entfernen': {
+      const entfernt = state.plan.find((e) => e.id === action.id)
+      return {
+        ...state,
+        plan: state.plan.filter((e) => e.id !== action.id),
+        // Ein ausgewählter Vorschlag darf nach dem Löschen nicht weiter
+        // auf dem Dashboard erscheinen.
+        gewaehlteOptionId: entfernt?.vorschlag ? null : state.gewaehlteOptionId,
+      }
+    }
     case 'option/waehlen':
       return { ...state, gewaehlteOptionId: action.id }
     case 'einheit/speichern': {

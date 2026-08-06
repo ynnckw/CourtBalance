@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CalendarClock, ChevronRight, Dumbbell, Moon, Sun, Waves } from 'lucide-react'
+import { CalendarClock, ChevronRight, Dumbbell, HeartPulse, Moon, Sun, Waves } from 'lucide-react'
 import { useApp } from '../lib/store'
 import { HEUTE, HINWEIS, PERSONA, TRAININGS_OPTIONEN } from '../lib/mockData'
 import { tagesBelastung } from '../lib/scoring'
@@ -23,7 +23,9 @@ export default function Today() {
   const [faktor, setFaktor] = useState<Faktor | null>(null)
 
   const variante = state.variante ?? 'A'
-  const gewaehlt = TRAININGS_OPTIONEN.find((o) => o.id === state.gewaehlteOptionId) ?? null
+  const gewaehlterEvent = state.plan.find((e) => e.tag === HEUTE.tag && e.vorschlag) ?? null
+  const gewaehlteOption = TRAININGS_OPTIONEN.find((o) => o.id === state.gewaehlteOptionId) ?? null
+  const tagesplan = gewaehlterEvent && gewaehlteOption ? { event: gewaehlterEvent, option: gewaehlteOption } : null
   const verlaufWerte = [...state.verlauf.slice(-7).map((t) => t.regeneration).slice(0, 6), status.score]
 
   return (
@@ -47,32 +49,35 @@ export default function Today() {
             </>
           )}
 
-          {gewaehlt && (
+          {tagesplan && (
             <section>
               <SectionTitle>Dein Tagesplan</SectionTitle>
               <Card className="p-4">
                 <div className="flex items-start gap-3">
                   <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-court-100 text-court-700">
-                    <Dumbbell size={20} />
+                    {tagesplan.option.dauerMin === 0 ? <HeartPulse size={20} /> : <Dumbbell size={20} />}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="font-display text-[17px] font-semibold text-navy-900">{gewaehlt.titel}</p>
+                    <p className="font-display text-[17px] font-semibold text-navy-900">{tagesplan.option.titel}</p>
                     <p className="mt-0.5 text-[15px] text-ink-muted">
-                      Heute, {gewaehlt.dauer} · von dir ausgewählt
+                      Heute, {tagesplan.option.dauer} · von dir ausgewählt
                     </p>
                   </div>
                 </div>
                 <div className="mt-3">
-                  <Button
-                    breit
-                    variante="sekundaer"
-                    onClick={() => {
-                      const event = state.plan.find((e) => e.tag === HEUTE.tag && e.vorschlag)
-                      if (event) oeffne({ name: 'vorbereitung', eventId: event.id })
-                    }}
-                  >
-                    Trainingsvorbereitung öffnen
-                  </Button>
+                  {tagesplan.option.dauerMin === 0 ? (
+                    <Button breit variante="sekundaer" onClick={() => oeffne({ name: 'empfehlungen' })}>
+                      Entscheidung anpassen
+                    </Button>
+                  ) : (
+                    <Button
+                      breit
+                      variante="sekundaer"
+                      onClick={() => oeffne({ name: 'vorbereitung', eventId: tagesplan.event.id })}
+                    >
+                      Trainingsvorbereitung öffnen
+                    </Button>
+                  )}
                 </div>
               </Card>
             </section>

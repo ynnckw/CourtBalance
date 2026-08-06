@@ -138,7 +138,7 @@ function AmpelBlock({ onFaktor }: { onFaktor: (f: Faktor) => void }) {
   const { status } = useApp()
   const stil = AMPEL_STIL[status.ampel]
   return (
-    <section className="-mt-11">
+    <section>
       <div className={cx('rounded-[20px] border p-5 shadow-sm', stil.bg, stil.rand)}>
         <div className={cx('flex items-center gap-2 text-[15px] font-semibold', stil.text)}>
           <AmpelIcon ampel={status.ampel} size={20} />
@@ -169,7 +169,7 @@ function AmpelBlock({ onFaktor }: { onFaktor: (f: Faktor) => void }) {
 function ZahlenBlock({ verlaufWerte }: { verlaufWerte: number[] }) {
   const { status } = useApp()
   return (
-    <section className="-mt-11">
+    <section>
       <Card className="p-5">
         <div className="flex items-end justify-between gap-4">
           <div>

@@ -1,0 +1,10 @@
+{
+  "description": "This web application provides users with real-time updates on court case balances, enabling legal professionals and clients to manage financial obligations efficiently.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
